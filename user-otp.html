@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User OTP</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Enter OTP</h1>
+        <form id="otp-form">
+            <label for="otp">Enter 6 Digit OTP:</label>
+            <input type="text" id="otp" name="otp" maxlength="6" required>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('otp-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            // Simulate OTP success
+            window.location.href = 'user-dashboard.html';
+        });
+    </script>
+</body>
+</html>

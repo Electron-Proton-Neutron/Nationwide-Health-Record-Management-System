@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Provider Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Healthcare Provider Login</h1>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required style="outline: auto; padding-inline: 9px;">
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required style="outline: auto; height: 35px; border-radius: 5px; padding-inline: 8px;">
+            <p style="color: red;">Your password expires in 97 days</p>
+            
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            // For simplicity, simulate successful login
+            window.location.href = 'healthcare-dashboard.html';
+        });
+    </script>
+</body>
+</html>
