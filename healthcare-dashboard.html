@@ -3,21 +3,547 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Information</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Patient Information System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: blue;
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            margin: 0;
+        }
+
+        .tricolor-line {
+            height: 4px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            display: flex;
+        }
+
+        .tricolor-line div {
+            height: 100%;
+            width: 33.33%;
+        }
+
+        .saffron { background-color: #FF9933; }
+        .white-stripe { background-color: #ffffff; }
+        .green { background-color: #138808; }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-header h2 {
+            color: #138808;
+            margin: 0;
+        }
+
+        .patient-info-layout {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .patient-details {
+            flex: 1;
+        }
+
+        .patient-image-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .patient-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 3px solid #FF9933;
+        }
+
+        .default-image-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #999;
+            border: 3px solid #FF9933;
+        }
+
+        .image-upload-label {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: #138808;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .image-upload-label:hover {
+            background-color: #0d6d06;
+        }
+
+        #patientImageInput {
+            display: none;
+        }
+
+        .edit-btn {
+            background-color: white;
+            border: 2px solid #FF9933;
+            color: #FF9933;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-btn {
+            background-color: #138808;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .info-field {
+            margin-bottom: 15px;
+        }
+
+        .info-field label {
+            display: block;
+            color: #FF9933;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .info-field input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .info-field span {
+            display: block;
+            padding: 8px 0;
+        }
+
+        .history-container {
+            margin-top: 20px;
+        }
+
+        .history-record {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #FF9933;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .history-timestamp {
+            color: #138808;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .medical-images-section {
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+
+        .image-upload-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .image-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .image-info {
+            padding: 10px;
+        }
+
+        .image-info h4 {
+            margin: 0 0 5px 0;
+            color: #138808;
+        }
+
+        .image-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .delete-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .file-input-container {
+            margin: 20px 0;
+        }
+
+        .file-input-container input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .upload-btn {
+            background-color: #138808;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .tab-button.active {
+            background-color: #138808;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Patient Information</h1>
-        
-        <p>Name: John Doe</p>
-        <p>Age: 35</p>
-        <p>Phone No.: 123-456-7890</p>
-        <p>Emergency Phone No.: 987-654-3210</p>
-        <p>Ongoing Medications: Blood Pressure Medication</p>
-        <p>Previous Critical Health Issues: Heart Surgery</p>
-
-        <button class="submit-btn" style="background-color: #28a745;">Edit</button>
+    <div class="header">
+        <h1>Nationwide Health Record Management System</h1>
+        <div class="tricolor-line">
+            <div class="saffron"></div>
+            <div class="white-stripe"></div>
+            <div class="green"></div>
+        </div>
     </div>
+
+    <div class="container">
+        <div class="tab-container">
+            <button class="tab-button active" onclick="showTab('patientInfo')">Patient Information</button>
+            <button class="tab-button" onclick="showTab('medicalImages')">Medical Images</button>
+            <button class="tab-button" onclick="showTab('history')">Edit History</button>
+        </div>
+
+        <div id="patientInfoTab" class="tab-content active">
+            <div class="info-header">
+                <h2>Patient Information</h2>
+                <button id="editButton" class="edit-btn" onclick="toggleEdit()">Edit</button>
+            </div>
+
+            <div class="patient-info-layout">
+                <div class="patient-details">
+                    <div class="info-field">
+                        <label>Name:</label>
+                        <span id="nameDisplay">John Doe</span>
+                        <input type="text" id="nameInput" style="display: none;" value="John Doe">
+                    </div>
+                    <div class="info-field">
+                        <label>Age:</label>
+                        <span id="ageDisplay">35</span>
+                        <input type="text" id="ageInput" style="display: none;" value="35">
+                    </div>
+                    <div class="info-field">
+                        <label>Phone No.:</label>
+                        <span id="phoneDisplay">123-456-7890</span>
+                        <input type="text" id="phoneInput" style="display: none;" value="123-456-7890">
+                    </div>
+                    <div class="info-field">
+                        <label>Emergency Phone No.:</label>
+                        <span id="emergencyDisplay">987-654-3210</span>
+                        <input type="text" id="emergencyInput" style="display: none;" value="987-654-3210">
+                    </div>
+                    <div class="info-field">
+                        <label>Relation with Emergency Phone No. Holder:</label>
+                        <span id="relationdisplay">Daughter</span>
+                        <input type="text" id="emergencyInput" style="display: none;" value="987-654-3210">
+                    </div>
+                    <div class="info-field">
+                        <label>Ongoing Medications:</label>
+                        <span id="medicationsDisplay">Blood Pressure Medication</span>
+                        <input type="text" id="medicationsInput" style="display: none;" value="Blood Pressure Medication">
+                    </div>
+                    <div class="info-field">
+                        <label>Previous Critical Health Issues:</label>
+                        <span id="historyDisplay">Heart Surgery</span>
+                        <input type="text" id="historyInput" style="display: none;" value="Heart Surgery">
+                    </div>
+                </div>
+
+                <div class="patient-image-container">
+                    <div class="default-image-placeholder" id="defaultImagePlaceholder">
+                        <span>👤</span>
+                    </div>
+                    <img id="patientImage" class="patient-image" style="display: none;">
+                    <label class="image-upload-label" for="patientImageInput">
+                        📷
+                    </label>
+                    <input type="file" id="patientImageInput" accept="image/*" onchange="updatePatientImage(event)">
+                </div>
+            </div>
+        </div>
+
+        <div id="medicalImagesTab" class="tab-content">
+            <div class="info-header">
+                <h2>Medical Scans & Results</h2>
+            </div>
+
+            <div class="image-upload-container">
+                <h3>Upload New Medical Image</h3>
+                <div class="file-input-container">
+                    <input type="text" id="imageTitle" placeholder="Image Title (e.g., Chest X-Ray)">
+                    <input type="text" id="imageDate" placeholder="Date of Scan (MM/DD/YYYY)">
+                    <input type="text" id="imageDescription" placeholder="Description or Notes">
+                    <input type="file" id="imageFile" accept="image/*" style="margin: 10px 0;">
+                    <button onclick="uploadImage()" class="upload-btn">Upload Image</button>
+                </div>
+            </div>
+
+            <div id="imageGallery" class="image-gallery">
+                <!-- Images will be added here dynamically -->
+            </div>
+        </div>
+
+        <div id="historyTab" class="tab-content">
+            <div class="info-header">
+                <h2>Edit History</h2>
+            </div>
+            <div id="editHistory" class="history-container">
+                <!-- Edit history will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+    <script>
+        let isEditing = false;
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function toggleEdit() {
+            isEditing = !isEditing;
+            const editButton = document.getElementById('editButton');
+            const fields = [
+                'name', 'age', 'phone', 'emergency', 
+                'medications', 'history'
+            ];
+
+            if (isEditing) {
+                editButton.textContent = 'Save';
+                editButton.className = 'save-btn';
+                fields.forEach(field => {
+                    document.getElementById(${field}Display).style.display = 'none';
+                    document.getElementById(${field}Input).style.display = 'block';
+                });
+            } else {
+                saveChanges();
+                editButton.textContent = 'Edit';
+                editButton.className = 'edit-btn';
+                fields.forEach(field => {
+                    document.getElementById(${field}Display).style.display = 'block';
+                    document.getElementById(${field}Input).style.display = 'none';
+                });
+            }
+        }
+
+        function updatePatientImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const patientImage = document.getElementById('patientImage');
+                    const placeholder = document.getElementById('defaultImagePlaceholder');
+                    
+                    patientImage.src = e.target.result;
+                    patientImage.style.display = 'block';
+                    placeholder.style.display = 'none';
+
+                    addToHistory({
+                        'Profile Image': 'Updated profile image'
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveChanges() {
+            const fields = [
+                'name', 'age', 'phone', 'emergency', 
+                'medications', 'history'
+            ];
+            
+            const changes = {};
+            fields.forEach(field => {
+                const newValue = document.getElementById(${field}Input).value;
+                document.getElementById(${field}Display).textContent = newValue;
+                changes[field] = newValue;
+            });
+            addToHistory(changes);
+        }
+
+        function addToHistory(changes) {
+            const historyDiv = document.getElementById('editHistory');
+            const record = document.createElement('div');
+            record.className = 'history-record';
+            
+            const timestamp = new Date().toLocaleString();
+            let historyHTML = <div class="history-timestamp">Modified on: ${timestamp}</div>;
+            
+            for (const [field, value] of Object.entries(changes)) {
+                historyHTML += <div><strong>${field}:</strong> ${value}</div>;
+            }
+            
+            record.innerHTML = historyHTML;
+            historyDiv.insertBefore(record, historyDiv.firstChild);
+        }
+
+        function uploadImage() {
+            const titleInput = document.getElementById('imageTitle');
+            const dateInput = document.getElementById('imageDate');
+            const descInput = document.getElementById('imageDescription');
+            const fileInput = document.getElementById('imageFile');
+
+            if (!titleInput.value || !dateInput.value || !fileInput.files[0]) {
+                alert('Please fill in all required fields and select an image');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'image-card';
+                
+                imageCard.innerHTML = `
+                    <img src="${e.target.result}" alt="${titleInput.value}">
+                    <div class="image-info">
+                        <h4>${titleInput.value}</h4>
+                        <p>Date: ${dateInput.value}</p>
+                        <p>${descInput.value}</p>
+                        <button onclick="this.parentElement.parentElement.remove()" class="delete-btn">Delete</button>
+                    </div>
+                `;
+
+                document.getElementById('imageGallery').appendChild(imageCard);
+
+                // Add to history
+                addToHistory({
+                    'Image Upload': ${titleInput.value} (${dateInput.value})
+                });
+
+                // Clear inputs
+                titleInput.value = '';
+                dateInput.value = '';
+                descInput.value = '';
+                fileInput.value = '';
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>

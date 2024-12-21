@@ -3,18 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Information</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Healthcare Dashboard</title>
+    <style>
+        /* ... (previous styles remain the same until .section) ... */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .white-band {
+            background-color: white;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .white-band h1 {
+            font-size: 24px;
+            color: blue;
+            margin: 0;
+            position: relative;
+        }
+
+        .white-band h1::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #FF9933 33%, white 33%, white 66%, #138808 66%);
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 20px;
+            padding: 20px;
+        }
+
+        .dashboard-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Updated section styling with tricolor border */
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            border: 4px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            bottom: -4px;
+            left: -4px;
+            z-index: -1;
+            border-radius: 12px;
+            background: linear-gradient(to bottom, #FF9933, white, #138808);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Updated content-area styling with tricolor border */
+        .content-area {
+            background: white;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            position: relative;
+            border: 4px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .content-area::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            bottom: -4px;
+            left: -4px;
+            z-index: -1;
+            border-radius: 12px;
+            background: linear-gradient(to bottom, #FF9933, white, #138808);
+        }
+
+        /* Calendar Styles */
+        .calendar {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .calendar-day {
+            padding: 10px;
+            text-align: center;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .calendar-day.has-event {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        /* Prescription Styles */
+        .prescription-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Updated prescription-item styling with tricolor border */
+        .prescription-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            background: white;
+        }
+
+        .prescription-item::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            bottom: -3px;
+            left: -3px;
+            z-index: -1;
+            border-radius: 7px;
+            background: linear-gradient(to right, #FF9933, white, #138808);
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: auto 200px;
+            gap: 20px;
+        }
+
+        .default-image-placeholder {
+            width: 200px;
+            height: 200px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #999;
+            border: 3px solid transparent;
+            position: relative;
+            background-clip: padding-box;
+        }
+
+        .default-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            bottom: -3px;
+            left: -3px;
+            z-index: -1;
+            border-radius: 3px;
+            background: linear-gradient(to bottom, #FF9933, white, #138808);
+        }
+
+        /* Button styling */
+        button {
+            padding: 8px 16px;
+            border: none;
+            background: #1976d2;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1565c0;
+        }
+    </style>
 </head>
+<!-- ... (rest of the HTML and JavaScript remains the same) ... -->
 <body>
-    <div class="container">
-        <h1>Patient Information</h1>
-        <p>Name: John Doe</p>
-        <p>Age: 35</p>
-        <p>Phone No.: 123-456-7890</p>
-        <p>Emergency Phone No.: 987-654-3210</p>
-        <p>Ongoing Medications: Blood Pressure Medication</p>
-        <p>Previous Critical Health Issues: Heart Surgery</p>
+    <div class="white-band">
+        <h1>Nationwide Health Record Management System</h1>
     </div>
+
+    <div class="container">
+        <div class="dashboard-sections">
+            <div class="section" onclick="showContent('records')">
+                <h3>Patient Information</h3>
+                <p>View and manage patient records</p>
+            </div>
+            <div class="section" onclick="showContent('calendar')">
+                <h3>Appointments</h3>
+                <p>Schedule and manage appointments</p>
+            </div>
+            <div class="section" onclick="showContent('prescriptions')">
+                <h3>Prescriptions</h3>
+                <p>Write and manage prescriptions</p>
+            </div>
+        </div>
+
+        <div id="records-content" class="content-area">
+            <div class="patient-info">
+                <div>
+                    <h2>Patient Information</h2>
+                    <p><strong>Name:</strong> John Doe</p>
+                    <p><strong>Age:</strong> 35</p>
+                    <p><strong>Phone:</strong> 123-456-7890</p>
+                    <p><strong>Emergency Contact:</strong> 987-654-3210</p>
+                    <p><strong>Current Medications:</strong> Blood Pressure Medication</p>
+                    <p><strong>Previous Health Issues:</strong> Heart Surgery</p>
+                </div>
+                <div class="default-image-placeholder">
+                    👤
+                </div>
+            </div>
+        </div>
+
+        <div id="calendar-content" class="content-area">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button onclick="previousMonth()">&lt;</button>
+                    <h3 id="current-month">December 2024</h3>
+                    <button onclick="nextMonth()">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-days"></div>
+            </div>
+        </div>
+
+        <div id="prescriptions-content" class="content-area">
+            <h2>Current Prescriptions</h2>
+            <ul class="prescription-list">
+                <li class="prescription-item">
+                    <h3>Lisinopril</h3>
+                    <p>Dosage: 10mg</p>
+                    <p>Frequency: Once daily</p>
+                    <p>Duration: 3 months</p>
+                </li>
+                <li class="prescription-item">
+                    <h3>Metformin</h3>
+                    <p>Dosage: 500mg</p>
+                    <p>Frequency: Twice daily</p>
+                    <p>Duration: 6 months</p>
+                </li>
+                <li class="prescription-item">
+                    <h3>Atorvastatin</h3>
+                    <p>Dosage: 20mg</p>
+                    <p>Frequency: Once daily at bedtime</p>
+                    <p>Duration: Ongoing</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let events = new Map();
+
+        // Generate some random events
+        for (let i = 0; i < 5; i++) {
+            let randomDay = new Date(2024, 11, Math.floor(Math.random() * 31) + 1);
+            events.set(randomDay.toDateString(), 'Appointment');
+        }
+
+        function showContent(section) {
+            document.querySelectorAll('.content-area').forEach(area => area.style.display = 'none');
+            document.getElementById(${section}-content).style.display = 'block';
+            if (section === 'calendar') {
+                renderCalendar();
+            }
+        }
+
+        function renderCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                              "July", "August", "September", "October", "November", "December"];
+            
+            document.getElementById('current-month').textContent = 
+                ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()};
+
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            
+            const calendarDays = document.getElementById('calendar-days');
+            calendarDays.innerHTML = '';
+
+            // Add day headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day';
+                dayHeader.textContent = day;
+                calendarDays.appendChild(dayHeader);
+            });
+
+            // Add empty cells for days before first day of month
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                calendarDays.appendChild(document.createElement('div'));
+            }
+
+            // Add days of month
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+
+                const currentDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                if (events.has(currentDayDate.toDateString())) {
+                    dayElement.classList.add('has-event');
+                }
+
+                dayElement.onclick = () => toggleEvent(currentDayDate);
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        function toggleEvent(date) {
+            if (events.has(date.toDateString())) {
+                events.delete(date.toDateString());
+            } else {
+                events.set(date.toDateString(), 'Appointment');
+            }
+            renderCalendar();
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+    </script>
 </body>
 </html>

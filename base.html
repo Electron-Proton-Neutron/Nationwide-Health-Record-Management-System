@@ -5,8 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Healthcare Portal</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .white-band {
+            background-color: white;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .white-band h1 {
+            font-size: 24px;
+            color: blue;
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            margin: 0;
+        }
+
+        .white-band h1::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #FF9933 33%, white 33%, white 66%, #138808 66%);
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .container {
+            margin-top: 100px;
+        }
+    </style>
 </head>
 <body>
+    <!-- White Band -->
+    <div class="white-band">
+        <h1>Nationwide Health Record Management System</h1>
+    </div>
+
+    <!-- Main Container -->
     <div class="container">
         <h1>Healthcare Portal</h1>
         <form id="initial-form">
