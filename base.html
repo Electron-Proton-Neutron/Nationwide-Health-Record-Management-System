@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified National Health Database</title>
+</head>
+<body>
+    <header>
+        <h1>Unified National Health Database</h1>
+    </header>
+    <div class="container">
+        <h2>Patient Information</h2>
+        <form id="health-form">
+            <label for="medical-history">Medical History:</label>
+            <textarea id="medical-history" name="medical-history" rows="4"></textarea>
+
+            <label for="allergies">Allergies:</label>
+            <input type="text" id="allergies" name="allergies">
+
+            <label for="diagnosis">Recent Diagnosis:</label>
+            <input type="text" id="diagnosis" name="diagnosis">
+
+            <button type="button" onclick="saveRecord()">Save Record</button>
+        </form>
+
+        <div class="record-list" id="record-list">
+            <h2>Saved Records</h2>
+        </div>
+    </div>
+
+</body>
+</html>
