@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Information System</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.ico">
     <style>
         /* Theme variables */
         :root[data-theme="light"] {
@@ -563,16 +564,16 @@
                 editButton.textContent = 'Save';
                 editButton.className = 'save-btn';
                 fields.forEach(field => {
-                    document.getElementById(field + 'Display').style.display = 'none';
-                    document.getElementById(field + 'Input').style.display = 'block';
+                    document.getElementById(${field}Display).style.display = 'none';
+                    document.getElementById(${field}Input).style.display = 'block';
                 });
             } else {
                 saveChanges();
                 editButton.textContent = 'Edit';
                 editButton.className = 'edit-btn';
                 fields.forEach(field => {
-                    document.getElementById(field + 'Display').style.display = 'block';
-                    document.getElementById(field + 'Input').style.display = 'none';
+                    document.getElementById(${field}Display).style.display = 'block';
+                    document.getElementById(${field}Input).style.display = 'none';
                 });
             }
         }
@@ -605,8 +606,8 @@
             
             const changes = {};
             fields.forEach(field => {
-                const newValue = document.getElementById(field + 'Input').value;
-                document.getElementById(field + 'Display').textContent = newValue;
+                const newValue = document.getElementById(${field}Input).value;
+                document.getElementById(${field}Display).textContent = newValue;
                 changes[field] = newValue;
             });
             addToHistory(changes);
@@ -616,18 +617,17 @@
             const historyDiv = document.getElementById('editHistory');
             const record = document.createElement('div');
             record.className = 'history-record';
-
+            
             const timestamp = new Date().toLocaleString();
-            let historyHTML = `<div class="history-timestamp">Modified on: ${timestamp}</div>`;
-
+            let historyHTML = <div class="history-timestamp">Modified on: ${timestamp}</div>;
+            
             for (const [field, value] of Object.entries(changes)) {
-                historyHTML += `<div><strong>${field}:</strong> ${value}</div>`;
+                historyHTML += <div><strong>${field}:</strong> ${value}</div>;
             }
-
+            
             record.innerHTML = historyHTML;
             historyDiv.insertBefore(record, historyDiv.firstChild);
         }
-
 
         function uploadImage() {
             const titleInput = document.getElementById('imageTitle');
@@ -661,9 +661,8 @@
 
                 // Add to history
                 addToHistory({
-                    'Image Upload': `${titleInput.value} (${dateInput.value})`
+                    'Image Upload': ${titleInput.value} (${dateInput.value})
                 });
-
 
                 // Clear inputs
                 titleInput.value = '';
