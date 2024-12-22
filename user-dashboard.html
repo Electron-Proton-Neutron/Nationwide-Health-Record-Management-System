@@ -14,8 +14,6 @@
             --border-color: #ccc;
             --accent-color: #1976d2;
             --hover-color: #1565c0;
-            --calendar-event: #e3f2fd;
-            --calendar-event-text: #1976d2;
             --section-shadow: rgba(0, 0, 0, 0.1);
             --green: #138808;
         }
@@ -28,8 +26,6 @@
             --border-color: #404040;
             --accent-color: #90caf9;
             --hover-color: #64b5f6;
-            --calendar-event: #304ffe;
-            --calendar-event-text: #ffffff;
             --section-shadow: rgba(0, 0, 0, 0.3);
             --green: #1aad1a;
         }
@@ -60,17 +56,6 @@
             color: var(--accent-color);
             margin: 0;
             position: relative;
-        }
-
-        .white-band h1::after {
-            content: "";
-            display: block;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(to right, #FF9933 33%, var(--bg-secondary) 33%, var(--bg-secondary) 66%, #138808 66%);
-            position: absolute;
-            bottom: -6px;
-            left: 0;
         }
 
         .theme-toggle {
@@ -121,18 +106,6 @@
             background-clip: padding-box;
         }
 
-        .section::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            bottom: -4px;
-            left: -4px;
-            z-index: -1;
-            border-radius: 12px;
-            background: linear-gradient(to bottom, #FF9933, var(--bg-secondary), #138808);
-        }
-
         .section:hover {
             transform: translateY(-5px);
         }
@@ -144,58 +117,33 @@
             border-radius: 8px;
             display: none;
             position: relative;
-            border: 4px solid transparent;
-            background-clip: padding-box;
-        }
-
-        .content-area::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            bottom: -4px;
-            left: -4px;
-            z-index: -1;
-            border-radius: 12px;
-            background: linear-gradient(to bottom, #FF9933, var(--bg-secondary), #138808);
         }
 
         .calendar {
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: var(--bg-primary);
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        .calendar-day {
-            padding: 10px;
+            gap: 10px;
             text-align: center;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            cursor: pointer;
-            color: var(--text-primary);
         }
 
-        .calendar-day.has-event {
-            background: var(--calendar-event);
-            color: var(--calendar-event-text);
+        .calendar .day {
+            padding: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+
+        .calendar .day:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .calendar .day.selected {
+            background-color: var(--green);
+            color: white;
         }
 
         .prescription-list {
@@ -209,52 +157,6 @@
             margin-bottom: 10px;
             border-radius: 5px;
             position: relative;
-            border: 3px solid transparent;
-            background-clip: padding-box;
-        }
-
-        .prescription-item::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            right: -3px;
-            bottom: -3px;
-            left: -3px;
-            z-index: -1;
-            border-radius: 7px;
-            background: linear-gradient(to right, #FF9933, var(--bg-secondary), #138808);
-        }
-
-        .patient-info {
-            display: grid;
-            grid-template-columns: auto 200px;
-            gap: 20px;
-        }
-
-        .default-image-placeholder {
-            width: 200px;
-            height: 200px;
-            background-color: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: var(--text-secondary);
-            border: 3px solid transparent;
-            position: relative;
-            background-clip: padding-box;
-        }
-
-        .default-image-placeholder::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            right: -3px;
-            bottom: -3px;
-            left: -3px;
-            z-index: -1;
-            border-radius: 3px;
-            background: linear-gradient(to bottom, #FF9933, var(--bg-secondary), #138808);
         }
 
         button {
@@ -271,7 +173,6 @@
             background: var(--hover-color);
         }
 
-        /* Chatbot specific styles */
         .chatbot-container {
             max-width: 600px;
             margin: 0 auto;
@@ -303,11 +204,6 @@
             transition: border-color 0.3s;
         }
 
-        .chatbot-form textarea:focus {
-            outline: none;
-            border-color: var(--green);
-        }
-
         .chatbot-form button {
             background: var(--green);
             color: white;
@@ -322,15 +218,12 @@
             min-width: 150px;
         }
 
-        .chatbot-form button:hover {
-            background: #0d6a05;
-        }
-
         @media only screen and (max-width: 768px) {
             [class*="col-"] {
                 width: 100%;
             }
-            
+        }
+
             .patient-info {
                 grid-template-columns: 1fr;
             }
@@ -338,7 +231,6 @@
             .default-image-placeholder {
                 margin: 0 auto;
             }
-        }
     </style>
 </head>
 <body>
@@ -356,7 +248,7 @@
                 <h3>Patient Information</h3>
                 <p>View and manage patient records</p>
             </div>
-            <div class="section" onclick="showContent('calendar')">
+            <div class="section" onclick="showContent('appointments')">
                 <h3>Appointments</h3>
                 <p>Schedule and manage appointments</p>
             </div>
@@ -387,14 +279,25 @@
             </div>
         </div>
 
-        <div id="calendar-content" class="content-area">
-            <div class="calendar">
-                <div class="calendar-header">
-                    <button onclick="previousMonth()">&lt;</button>
-                    <h3 id="current-month">December 2024</h3>
-                    <button onclick="nextMonth()">&gt;</button>
-                </div>
-                <div class="calendar-grid" id="calendar-days"></div>
+
+        <div id="appointments-content" class="content-area">
+            <h2>Appointments</h2>
+            <div id="calendar" class="calendar"></div>
+            <div id="calendar-controls">
+                <button onclick="changeMonth(-1)">Prev</button>
+                <span id="calendar-month"></span>
+                <button onclick="changeMonth(1)">Next</button>
+            </div>
+
+            <div id="appointment-details" style="display: none;">
+                <h3>Select Appointment Time</h3>
+                <form id="appointment-form">
+                    <label for="appointment-time">Select Appointment Time:</label>
+                    <input type="time" id="appointment-time" required>
+
+                    <button type="submit">Book Appointment</button>
+                </form>
+                <div id="appointment-response"></div>
             </div>
         </div>
 
@@ -422,160 +325,129 @@
             </ul>
         </div>
 
+
         <div id="chatbot-content" class="content-area">
+            <h2>Healthcare Chatbot</h2>
             <div class="chatbot-container">
-                <h2>Healthcare Chatbot</h2>
-                <form class="chatbot-form" id="chatbotForm">
-                    <label for="symptoms">Hi, How can I help you?</label>
-                    <textarea 
-                        id="symptoms" 
-                        placeholder="e.g., I feel feverish, My throat is paining"
-                    ></textarea>
-                    <button type="submit">Get Advice</button>
+                <form class="chatbot-form" id="chatbot-form">
+                    <label for="symptoms">Describe your symptoms:</label>
+                    <textarea id="symptoms" placeholder="Enter your symptoms here..." required></textarea>
+                    <button type="submit">Submit</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        let currentDate = new Date();
-        let events = new Map();
+        const API_KEY = 'cal_live_11c610edebb4a9dc69ff0b2c2654a633';
 
-        // Generate some random events
-        for (let i = 0; i < 5; i++) {
-            let randomDay = new Date(2024, 11, Math.floor(Math.random() * 31) + 1);
-            events.set(randomDay.toDateString(), 'Appointment');
-        }
-
-        function showContent(section) {
-            document.querySelectorAll('.content-area').forEach(area => area.style.display = 'none');
-            document.getElementById(${section}-content).style.display = 'block';
-            if (section === 'calendar') {
-                renderCalendar();
-            }
-        }
-
-        function renderCalendar() {
-            const monthNames = ["January", "February", "March", "April", "May", "June",
-                              "July", "August", "September", "October", "November", "December"];
-                              document.getElementById('current-month').textContent = 
-                ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()};
-
-            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-            
-            const calendarDays = document.getElementById('calendar-days');
-            calendarDays.innerHTML = '';
-
-            // Add day headers
-            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
-                const dayHeader = document.createElement('div');
-                dayHeader.className = 'calendar-day';
-                dayHeader.textContent = day;
-                calendarDays.appendChild(dayHeader);
-            });
-
-            // Add empty cells for days before first day of month
-            for (let i = 0; i < firstDay.getDay(); i++) {
-                calendarDays.appendChild(document.createElement('div'));
-            }
-
-            // Add days of month
-            for (let day = 1; day <= lastDay.getDate(); day++) {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day';
-                dayElement.textContent = day;
-
-                const currentDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-                if (events.has(currentDayDate.toDateString())) {
-                    dayElement.classList.add('has-event');
-                }
-
-                dayElement.onclick = () => toggleEvent(currentDayDate);
-                calendarDays.appendChild(dayElement);
-            }
-        }
-
-        function toggleEvent(date) {
-            if (events.has(date.toDateString())) {
-                events.delete(date.toDateString());
-            } else {
-                events.set(date.toDateString(), 'Appointment');
-            }
-            renderCalendar();
-        }
-
-        function previousMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        }
-
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        }
-
+        // Function to toggle theme
         function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
+            const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            
-            // Update theme toggle button icon
-            const themeIcon = document.querySelector('.theme-icon');
-            themeIcon.textContent = newTheme === 'light' ? '🌞' : '🌙';
-            
-            // Save theme preference
-            localStorage.setItem('theme', newTheme);
+            document.documentElement.setAttribute('data-theme', newTheme);
         }
 
-        // Function to initialize theme from localStorage
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            const themeIcon = document.querySelector('.theme-icon');
-            themeIcon.textContent = savedTheme === 'light' ? '🌞' : '🌙';
+        // Show specific content section
+        function showContent(content) {
+            const contentSections = document.querySelectorAll('.content-area');
+            contentSections.forEach((section) => {
+                section.style.display = 'none';
+            });
+            document.getElementById(content + '-content').style.display = 'block';
         }
 
-        // Chatbot form submission handler
-        document.getElementById('chatbotForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const symptoms = document.getElementById('symptoms').value;
-            
-            if (!symptoms) {
-                alert("Please enter symptoms.");
-                return;
+        // Display Calendar
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const monthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' });
+            document.getElementById('calendar-month').textContent = `${monthName} ${currentYear}`;
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            let calendarHTML = '';
+            for (let i = 0; i < firstDay; i++) {
+                calendarHTML += '<div class="day"></div>';
             }
-            
+            for (let day = 1; day <= lastDate; day++) {
+                calendarHTML += `<div class="day" onclick="selectDate(${day})">${day}</div>`;
+            }
+            calendar.innerHTML = calendarHTML;
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar();
+        }
+
+        // Initialize Calendar
+        generateCalendar();
+
+
+        // Select Date and Show Available Slots
+        let selectedDate = '';
+        function selectDate(day) {
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+            selectedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+            document.getElementById('appointment-details').style.display = 'block';
+        }
+
+        // Book Appointment with Cal.com API
+        async function bookAppointment(date, time) {
+            const appointmentData = {
+                appointmentDateTime: `${date}T${time}:00Z`,  // Cal.com expects ISO 8601 format
+            };
+
             try {
-                const response = await fetch('/api/chatbot', {
+                const response = await fetch('https://api.cal.com/v1/bookings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
                     },
-                    body: JSON.stringify({ symptoms }),
+                    body: JSON.stringify(appointmentData),
                 });
-                
-                const data = await response.json();
-                
-                if (data.error) {
-                    alert(Error: ${data.error});
+
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('appointment-response').textContent = `Appointment booked successfully!`;
                 } else {
-                    alert(data.advice);
+                    document.getElementById('appointment-response').textContent = `Error: ${result.message}`;
                 }
             } catch (error) {
-                alert("An error occurred. Please try again.");
+                document.getElementById('appointment-response').textContent = `Error: ${error.message}`;
             }
+}
+
+        // Appointment form submit handler
+        document.getElementById('appointment-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const time = document.getElementById('appointment-time').value;
+
+        // Call bookAppointment without the patient name
+        bookAppointment(selectedDate, time);
         });
 
-        // Initialize everything when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeTheme();
-            renderCalendar();
-            // Show the patient records by default
-            showContent('records');
-        });
+
+        // Initialize Calendar
+        generateCalendar();
+
+        // Show the first section by default
+        showContent('records');
     </script>
 </body>
 </html>
