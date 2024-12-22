@@ -1,20 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Healthcare Dashboard</title>
     <style>
-        /* ... (previous styles remain the same until .section) ... */
+        /* Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f0f0f0;
+            --bg-secondary: white;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #ccc;
+            --accent-color: #1976d2;
+            --hover-color: #1565c0;
+            --calendar-event: #e3f2fd;
+            --calendar-event-text: #1976d2;
+            --section-shadow: rgba(0, 0, 0, 0.1);
+            --green: #138808;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #404040;
+            --accent-color: #90caf9;
+            --hover-color: #64b5f6;
+            --calendar-event: #304ffe;
+            --calendar-event-text: #ffffff;
+            --section-shadow: rgba(0, 0, 0, 0.3);
+            --green: #1aad1a;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .white-band {
-            background-color: white;
+            background-color: var(--bg-secondary);
             padding: 20px 0;
             text-align: center;
             width: 100%;
@@ -22,12 +52,12 @@
             top: 0;
             left: 0;
             z-index: 10;
-            border-bottom: 2px solid #ccc;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .white-band h1 {
             font-size: 24px;
-            color: blue;
+            color: var(--accent-color);
             margin: 0;
             position: relative;
         }
@@ -37,10 +67,32 @@
             display: block;
             width: 100%;
             height: 4px;
-            background: linear-gradient(to right, #FF9933 33%, white 33%, white 66%, #138808 66%);
+            background: linear-gradient(to right, #FF9933 33%, var(--bg-secondary) 33%, var(--bg-secondary) 66%, #138808 66%);
             position: absolute;
             bottom: -6px;
             left: 0;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-color);
+            color: white;
         }
 
         .container {
@@ -56,16 +108,16 @@
             margin-top: 20px;
         }
 
-        /* Updated section styling with tricolor border */
         .section {
-            background: white;
+            background: var(--bg-secondary);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.2s;
-            position: relative;
+            transition: transform 0.2s, background-color 0.3s;
+            box-shadow: 0 2px 4px var(--section-shadow);
             border: 4px solid transparent;
+            position: relative;
             background-clip: padding-box;
         }
 
@@ -78,16 +130,15 @@
             left: -4px;
             z-index: -1;
             border-radius: 12px;
-            background: linear-gradient(to bottom, #FF9933, white, #138808);
+            background: linear-gradient(to bottom, #FF9933, var(--bg-secondary), #138808);
         }
 
         .section:hover {
             transform: translateY(-5px);
         }
 
-        /* Updated content-area styling with tricolor border */
         .content-area {
-            background: white;
+            background: var(--bg-secondary);
             margin-top: 20px;
             padding: 20px;
             border-radius: 8px;
@@ -106,10 +157,9 @@
             left: -4px;
             z-index: -1;
             border-radius: 12px;
-            background: linear-gradient(to bottom, #FF9933, white, #138808);
+            background: linear-gradient(to bottom, #FF9933, var(--bg-secondary), #138808);
         }
 
-        /* Calendar Styles */
         .calendar {
             width: 100%;
             max-width: 800px;
@@ -121,7 +171,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background: #f8f9fa;
+            background: var(--bg-primary);
             border-radius: 5px;
             margin-bottom: 15px;
         }
@@ -136,32 +186,31 @@
         .calendar-day {
             padding: 10px;
             text-align: center;
-            background: #fff;
-            border: 1px solid #dee2e6;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 5px;
             cursor: pointer;
+            color: var(--text-primary);
         }
 
         .calendar-day.has-event {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: var(--calendar-event);
+            color: var(--calendar-event-text);
         }
 
-        /* Prescription Styles */
         .prescription-list {
             list-style: none;
             padding: 0;
         }
 
-        /* Updated prescription-item styling with tricolor border */
         .prescription-item {
+            background: var(--bg-secondary);
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
             position: relative;
             border: 3px solid transparent;
             background-clip: padding-box;
-            background: white;
         }
 
         .prescription-item::before {
@@ -173,7 +222,7 @@
             left: -3px;
             z-index: -1;
             border-radius: 7px;
-            background: linear-gradient(to right, #FF9933, white, #138808);
+            background: linear-gradient(to right, #FF9933, var(--bg-secondary), #138808);
         }
 
         .patient-info {
@@ -185,12 +234,12 @@
         .default-image-placeholder {
             width: 200px;
             height: 200px;
-            background-color: #f0f0f0;
+            background-color: var(--bg-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            color: #999;
+            color: var(--text-secondary);
             border: 3px solid transparent;
             position: relative;
             background-clip: padding-box;
@@ -205,28 +254,100 @@
             left: -3px;
             z-index: -1;
             border-radius: 3px;
-            background: linear-gradient(to bottom, #FF9933, white, #138808);
+            background: linear-gradient(to bottom, #FF9933, var(--bg-secondary), #138808);
         }
 
-        /* Button styling */
         button {
             padding: 8px 16px;
             border: none;
-            background: #1976d2;
+            background: var(--accent-color);
             color: white;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background: #1565c0;
+            background: var(--hover-color);
+        }
+
+        /* Chatbot specific styles */
+        .chatbot-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chatbot-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chatbot-form label {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .chatbot-form textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 16px;
+            min-height: 120px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .chatbot-form textarea:focus {
+            outline: none;
+            border-color: var(--green);
+        }
+
+        .chatbot-form button {
+            background: var(--green);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            align-self: center;
+            min-width: 150px;
+        }
+
+        .chatbot-form button:hover {
+            background: #0d6a05;
+        }
+
+        @media only screen and (max-width: 768px) {
+            [class*="col-"] {
+                width: 100%;
+            }
+            
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .default-image-placeholder {
+                margin: 0 auto;
+            }
         }
     </style>
 </head>
-<!-- ... (rest of the HTML and JavaScript remains the same) ... -->
 <body>
     <div class="white-band">
         <h1>Nationwide Health Record Management System</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-icon">🌞</span>
+            <span class="theme-text">Toggle Theme</span>
+        </button>
     </div>
 
     <div class="container">
@@ -242,6 +363,10 @@
             <div class="section" onclick="showContent('prescriptions')">
                 <h3>Prescriptions</h3>
                 <p>Write and manage prescriptions</p>
+            </div>
+            <div class="section" onclick="showContent('chatbot')">
+                <h3>Healthcare Chatbot</h3>
+                <p>Tell him how you are feeling</p>
             </div>
         </div>
 
@@ -296,6 +421,20 @@
                 </li>
             </ul>
         </div>
+
+        <div id="chatbot-content" class="content-area">
+            <div class="chatbot-container">
+                <h2>Healthcare Chatbot</h2>
+                <form class="chatbot-form" id="chatbotForm">
+                    <label for="symptoms">Hi, How can I help you?</label>
+                    <textarea 
+                        id="symptoms" 
+                        placeholder="e.g., I feel feverish, My throat is paining"
+                    ></textarea>
+                    <button type="submit">Get Advice</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -319,8 +458,7 @@
         function renderCalendar() {
             const monthNames = ["January", "February", "March", "April", "May", "June",
                               "July", "August", "September", "October", "November", "December"];
-            
-            document.getElementById('current-month').textContent = 
+                              document.getElementById('current-month').textContent = 
                 ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()};
 
             const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -376,6 +514,68 @@
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
         }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            
+            // Update theme toggle button icon
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'light' ? '🌞' : '🌙';
+            
+            // Save theme preference
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Function to initialize theme from localStorage
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = savedTheme === 'light' ? '🌞' : '🌙';
+        }
+
+        // Chatbot form submission handler
+        document.getElementById('chatbotForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const symptoms = document.getElementById('symptoms').value;
+            
+            if (!symptoms) {
+                alert("Please enter symptoms.");
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ symptoms }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(Error: ${data.error});
+                } else {
+                    alert(data.advice);
+                }
+            } catch (error) {
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        // Initialize everything when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
+            renderCalendar();
+            // Show the patient records by default
+            showContent('records');
+        });
     </script>
 </body>
 </html>

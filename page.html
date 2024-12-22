@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Provider Login</title>
+    <title>Healthcare Portal</title>
     <style>
         /* Theme variables */
         :root[data-theme="light"] {
@@ -16,7 +16,7 @@
             --button-bg: #4CAF50;
             --button-hover: #45a049;
             --shadow-color: rgba(0,0,0,0.1);
-            --error-color: #ff4444;
+            --heading-color: #1976d2;
         }
 
         :root[data-theme="dark"] {
@@ -29,7 +29,7 @@
             --button-bg: #45a049;
             --button-hover: #4CAF50;
             --shadow-color: rgba(0,0,0,0.3);
-            --error-color: #ff6666;
+            --heading-color: #64b5f6;
         }
 
         * {
@@ -104,7 +104,7 @@
             font-size: 20px;
         }
 
-        /* White band styles */
+        /* White Band */
         .white-band {
             background-color: var(--band-bg);
             padding: 20px 0;
@@ -119,7 +119,7 @@
 
         .white-band h1 {
             font-size: 24px;
-            color: #1976d2;
+            color: var(--heading-color);
             text-decoration: none;
             position: relative;
             display: inline-block;
@@ -137,17 +137,16 @@
             left: 0;
         }
 
-        /* Container styles */
+        /* Container */
         .container {
             margin-top: 100px;
             padding: 20px;
-            max-width: 400px;
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             background-color: var(--container-bg);
             border-radius: 8px;
             box-shadow: 0 2px 4px var(--shadow-color);
-            
         }
 
         .container h1 {
@@ -175,15 +174,16 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         label {
+            display: block;
+            margin-bottom: 5px;
             color: var(--text-color);
         }
 
-        input[type="text"],
-        input[type="password"] {
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--input-border);
@@ -193,26 +193,25 @@
             box-sizing: border-box;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #2196F3;
+        .radio-group {
+            display: flex;
+            gap: 20px;
         }
 
-        .error-message {
-            color: var(--error-color);
-            margin: 5px 0;
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .submit-btn {
-            padding: 12px 20px;
+            padding: 10px 20px;
             background-color: var(--button-bg);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 10px;
         }
 
         .submit-btn:hover {
@@ -220,11 +219,10 @@
         }
 
         @media only screen and (max-width: 768px) {
-  /* For mobile phones: */
-  [class*="col-"] {
-    width: 100%;
-  }}
-
+            [class*="col-"] {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -245,21 +243,25 @@
 
     <!-- Main Container -->
     <div class="container">
-        <h1>Healthcare Provider Login</h1>
-        <form id="login-form">
+        <h1>Healthcare Portal</h1>
+        <form id="initial-form">
             <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="aadhar">Enter Aadhar Number:</label>
+                <input type="text" id="aadhar" name="aadhar" placeholder="XXXX XXXX XXXX" required>
             </div>
 
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="healthcare" name="user-type" value="healthcare">
+                    <label for="healthcare">Healthcare Provider</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="user" name="user-type" value="user">
+                    <label for="user">User</label>
+                </div>
             </div>
 
-            <p class="error-message">Your password expires in 97 days</p>
-            
-            <button type="submit" class="submit-btn">Login</button>
+            <button type="submit" class="submit-btn">Submit</button>
         </form>
     </div>
 
@@ -281,9 +283,18 @@
         });
 
         // Form submission handler
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            window.location.href = 'healthcare-dashboard.html';
+        document.getElementById('initial-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const aadhar = document.getElementById('aadhar').value;
+            const userType = document.querySelector('input[name="user-type"]:checked')?.value;
+            console.log('Form submitted:', { aadhar, userType });
+
+            // Add navigation logic here
+            if (userType === 'healthcare') {
+                window.location.href = 'healthcare-provider.html';
+            } else if (userType === 'user') {
+                window.location.href = 'user-otp.html';
+            }
         });
     </script>
 </body>

@@ -1,229 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification</title>
     <style>
-        :root {
-    --saffron: #FF9933;
-    --green: #138808;
-    --white: #ffffff;
-    --navy: #000080;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, rgba(255,153,51,0.1), rgba(19,136,8,0.1));
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.container {
-    background: var(--white);
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 480px;
-    position: relative;
-    overflow: hidden;
-}
-
-.container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(to right, var(--saffron) 33.33%, var(--white) 33.33% 66.66%, var(--green) 66.66%);
-}
-
-h1 {
-    color: var(--navy);
-    margin-bottom: 30px;
-    font-size: 28px;
-    text-align: center;
-    position: relative;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-label {
-    color: #333;
-    font-weight: 500;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="number"] {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus {
-    outline: none;
-    border-color: var(--saffron);
-}
-
-.radio-group {
-    display: flex;
-    gap: 20px;
-    padding: 10px 0;
-}
-
-.radio-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-input[type="radio"] {
-    accent-color: var(--green);
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-.submit-btn {
-    background: var(--green);
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-}
-
-.submit-btn:hover {
-    background: #106906;
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.dashboard-card {
-    background: var(--white);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.alert {
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.alert-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 20px;
-    }
-    
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-}
-        /* Styling for the white band */
-        .white-band {
-            background-color: white;
-            padding: 20px 0; /* Top and bottom padding */
-            text-align: center;
-            width: 100%;
-            position: fixed; /* Ensure it stays at the top */
-            top: 0;
-            left: 0;
-            z-index: 10; /* Ensure it overlays other content */
-            border-bottom: 2px solid #ccc; /* Optional border for separation */
+        /* Theme Variables */
+        [data-theme="light"] {
+            --bg-primary: #f0f0f0;
+            --bg-secondary: white;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #ccc;
+            --accent-color: #1976d2;
+            --input-bg: white;
+            --input-text: #333;
+            --button-bg: #138808;
+            --button-hover: #106906;
         }
 
-        /* Styling for the text in the white band */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #404040;
+            --accent-color: #90caf9;
+            --input-bg: #333;
+            --input-text: #fff;
+            --button-bg: #1a472a;
+            --button-hover: #2a593a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* White Band */
+        .white-band {
+            background-color: var(--bg-secondary);
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            border-bottom: 2px solid var(--border-color);
+            transition: background-color 0.3s;
+        }
+
         .white-band h1 {
             font-size: 24px;
-            color: blue;
+            color: var(--accent-color);
             text-decoration: none;
             position: relative;
             display: inline-block;
-            margin: 0; /* Remove default margin */
+            margin: 0;
+            transition: color 0.3s;
         }
 
         .white-band h1::after {
             content: "";
             display: block;
             width: 100%;
-            height: 4px; /* Thickness of the underline */
-            background: linear-gradient(to right, #FF9933 33%, white 33%, white 66%, #138808 66%);
+            height: 4px;
+            background: linear-gradient(to right, #FF9933 33%, var(--bg-secondary) 33%, var(--bg-secondary) 66%, #138808 66%);
             position: absolute;
-            bottom: -6px; /* Position below the text */
+            bottom: -6px;
             left: 0;
         }
 
-        /* Ensure the main content is not hidden under the fixed band */
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* Container */
         .container {
-            margin-top: 100px; /* Adjust for the height of the white band */
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Center-align and style the OTP Verification heading */
+        .container h1 {
+            color: #1976d2; /* Set the text color to blue */
+            text-align: center; /* Center align the text */
+            margin-bottom: 20px;
+            position: relative; /* To position the saffron-white-green line */
+            font-size: 24px; /* Adjust font size if needed */
+        }
+
+        /* Add the saffron-white-green line above the heading */
+        .container h1::before {
+            content: "";
+            display: block;
+            width: 100%; /* Full width of the container */
+            height: 4px; /* Adjust the thickness */
+            background: linear-gradient(to right, #FF9933 33%, white 33%, white 66%, #138808 66%);
+            position: absolute;
+            top: -10px; /* Position it above the heading */
+            left: 0;
+        }
+
+        /* Form Styling */
+        #otp-form {
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
         }
 
         .submit-btn {
-            padding: 10px 20px;
-            background-color: #007BFF;
+            padding: 12px 24px;
+            background-color: var(--button-bg);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            width: 100%;
         }
 
         .submit-btn:hover {
-            background-color: #0056b3;
+            background-color: var(--button-hover);
+        }
+
+        @media only screen and (max-width: 768px) {
+            /* For mobile phones: */
+            [class*="col-"] {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- White Band -->
     <div class="white-band">
         <h1>Nationwide Health Record Management System</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-icon">🌞</span>
+            <span class="theme-text">Toggle Theme</span>
+        </button>
     </div>
 
-    <!-- Main Content -->
     <div class="container">
         <h1>OTP Verification</h1>
         <form id="otp-form">
@@ -235,6 +203,40 @@ input[type="radio"] {
             <button type="submit" class="submit-btn">Verify OTP</button>
         </form>
     </div>
-    <script src="script.js"></script>
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            
+            // Update theme toggle button icon
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'light' ? '🌞' : '🌙';
+            
+            // Save theme preference
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Initialize theme from localStorage
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = savedTheme === 'light' ? '🌞' : '🌙';
+        }
+
+        // Form submission handling
+        document.getElementById('otp-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            // Add your OTP verification logic here
+            console.log('OTP submitted:', otp);
+        });
+
+        // Initialize theme when page loads
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    </script>
 </body>
 </html>

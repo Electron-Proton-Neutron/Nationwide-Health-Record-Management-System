@@ -1,29 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Information System</title>
     <style>
+        /* Theme variables */
+        :root[data-theme="light"] {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --container-bg: #ffffff;
+            --header-bg: #ffffff;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --shadow-color: rgba(0,0,0,0.1);
+            --tab-inactive: #f0f0f0;
+            --image-card-bg: #ffffff;
+            --heading-color: #138808;
+            --edit-btn-color: #FF9933;
+            --history-bg: #f9f9f9;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --container-bg: #2d2d2d;
+            --header-bg: #2d2d2d;
+            --card-bg: #333333;
+            --border-color: #444;
+            --shadow-color: rgba(0,0,0,0.3);
+            --tab-inactive: #333333;
+            --image-card-bg: #2d2d2d;
+            --heading-color: #4CAF50;
+            --edit-btn-color: #FF9933;
+            --history-bg: #333333;
+        }
+
+        * {
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Theme switcher styles */
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .theme-icon {
+            font-size: 20px;
         }
 
         .header {
-            background-color: white;
+            background-color: var(--header-bg);
             padding: 20px 0;
             text-align: center;
             position: relative;
             margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--shadow-color);
         }
 
         .header h1 {
             font-size: 24px;
-            color: blue;
+            color: #1976d2;
             text-decoration: none;
             position: relative;
             display: inline-block;
@@ -52,9 +148,9 @@
             max-width: 800px;
             margin: 20px auto;
             padding: 20px;
-            background: white;
+            background-color: var(--container-bg);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--shadow-color);
         }
 
         .info-header {
@@ -63,11 +159,11 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .info-header h2 {
-            color: #138808;
+            color: var(--heading-color);
             margin: 0;
         }
 
@@ -91,26 +187,26 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border: 3px solid #FF9933;
+            border: 3px solid var(--edit-btn-color);
         }
 
         .default-image-placeholder {
             width: 100%;
             height: 100%;
-            background-color: #f0f0f0;
+            background-color: var(--card-bg);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
             color: #999;
-            border: 3px solid #FF9933;
+            border: 3px solid var(--edit-btn-color);
         }
 
         .image-upload-label {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background-color: #138808;
+            background-color: var(--heading-color);
             color: white;
             width: 32px;
             height: 32px;
@@ -131,9 +227,9 @@
         }
 
         .edit-btn {
-            background-color: white;
-            border: 2px solid #FF9933;
-            color: #FF9933;
+            background-color: var(--container-bg);
+            border: 2px solid var(--edit-btn-color);
+            color: var(--edit-btn-color);
             padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
@@ -141,7 +237,7 @@
         }
 
         .save-btn {
-            background-color: #138808;
+            background-color: var(--heading-color);
             border: none;
             color: white;
             padding: 8px 16px;
@@ -156,7 +252,7 @@
 
         .info-field label {
             display: block;
-            color: #FF9933;
+            color: var(--edit-btn-color);
             margin-bottom: 5px;
             font-weight: bold;
         }
@@ -164,8 +260,10 @@
         .info-field input {
             width: 100%;
             padding: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
             box-sizing: border-box;
         }
 
@@ -179,32 +277,53 @@
         }
 
         .history-record {
-            background-color: #f9f9f9;
+            background-color: var(--history-bg);
             padding: 15px;
             margin-bottom: 10px;
-            border-left: 4px solid #FF9933;
+            border-left: 4px solid var(--edit-btn-color);
             border-radius: 0 4px 4px 0;
         }
 
         .history-timestamp {
-            color: #138808;
+            color: var(--heading-color);
             font-size: 0.9em;
             margin-bottom: 8px;
         }
 
-        .medical-images-section {
-            margin-top: 30px;
-            border-top: 2px solid #eee;
-            padding-top: 20px;
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            background-color: var(--tab-inactive);
+            color: var(--text-color);
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .tab-button.active {
+            background-color: var(--heading-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .image-upload-container {
-            border: 2px dashed #ccc;
+            border: 2px dashed var(--border-color);
             padding: 20px;
             text-align: center;
             margin: 10px 0;
             border-radius: 4px;
-            background-color: #f9f9f9;
+            background-color: var(--history-bg);
         }
 
         .image-gallery {
@@ -215,18 +334,18 @@
         }
 
         .image-card {
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: var(--image-card-bg);
+            box-shadow: 0 2px 4px var(--shadow-color);
         }
 
         .image-card img {
             width: 100%;
             height: 150px;
             object-fit: cover;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .image-info {
@@ -235,13 +354,13 @@
 
         .image-info h4 {
             margin: 0 0 5px 0;
-            color: #138808;
+            color: var(--heading-color);
         }
 
         .image-info p {
             margin: 0;
             font-size: 0.9em;
-            color: #666;
+            color: var(--text-color);
         }
 
         .delete-btn {
@@ -262,12 +381,14 @@
             width: calc(100% - 22px);
             padding: 8px;
             margin-bottom: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
         }
 
         .upload-btn {
-            background-color: #138808;
+            background-color: var(--heading-color);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -275,35 +396,25 @@
             cursor: pointer;
             margin-top: 10px;
         }
-
-        .tab-container {
-            margin-bottom: 20px;
-        }
-
-        .tab-button {
-            padding: 10px 20px;
-            margin-right: 10px;
-            border: none;
-            background-color: #f0f0f0;
-            cursor: pointer;
-            border-radius: 4px 4px 0 0;
-        }
-
-        .tab-button.active {
-            background-color: #138808;
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+        @media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  [class*="col-"] {
+    width: 100%;
+  }
         }
     </style>
 </head>
 <body>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <span class="theme-icon">☀</span>
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+        <span class="theme-icon">🌙</span>
+    </div>
+
     <div class="header">
         <h1>Nationwide Health Record Management System</h1>
         <div class="tricolor-line">
@@ -350,8 +461,8 @@
                     </div>
                     <div class="info-field">
                         <label>Relation with Emergency Phone No. Holder:</label>
-                        <span id="relationdisplay">Daughter</span>
-                        <input type="text" id="emergencyInput" style="display: none;" value="987-654-3210">
+                        <span id="relationDisplay">Daughter</span>
+                        <input type="text" id="relationInput" style="display: none;" value="Daughter">
                     </div>
                     <div class="info-field">
                         <label>Ongoing Medications:</label>
@@ -408,7 +519,24 @@
             </div>
         </div>
     </div>
+
     <script>
+        // Theme switcher functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        themeToggle.checked = savedTheme === 'dark';
+
+        // Theme toggle event listener
+        themeToggle.addEventListener('change', function() {
+            const newTheme = this.checked ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
         let isEditing = false;
 
         function showTab(tabName) {
@@ -427,7 +555,7 @@
             isEditing = !isEditing;
             const editButton = document.getElementById('editButton');
             const fields = [
-                'name', 'age', 'phone', 'emergency', 
+                'name', 'age', 'phone', 'emergency', 'relation',
                 'medications', 'history'
             ];
 
@@ -471,7 +599,7 @@
 
         function saveChanges() {
             const fields = [
-                'name', 'age', 'phone', 'emergency', 
+                'name', 'age', 'phone', 'emergency', 'relation',
                 'medications', 'history'
             ];
             
