@@ -355,6 +355,99 @@
         .chatbot-form button:hover {
             background: #0d6a05;
         }
+        .event-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.event-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    color: var(--text-primary);
+}
+
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.form-group input[type="text"],
+.form-group input[type="time"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.event-list {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    color: var(--text-primary);
+}
+
+.event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--bg-primary);
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.event-item button {
+    padding: 4px 8px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.calendar-day {
+    position: relative;
+}
+
+.calendar-day.has-event::after {
+    content: '•';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent-color);
+}
 
         @media only screen and (max-width: 768px) {
             [class*="col-"] {
@@ -426,6 +519,38 @@
                 </div>
                 <div class="calendar-grid" id="calendar-days"></div>
             </div>
+        
+            <!-- Event Form Modal -->
+            <div id="event-modal" class="event-modal">
+                <div class="event-modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3>Add Event</h3>
+                    <form id="event-form">
+                        <input type="hidden" id="event-date">
+                        <div class="form-group">
+                            <label for="event-title">Event Title:</label>
+                            <input type="text" id="event-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-time">Time:</label>
+                            <input type="time" id="event-time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-reminder">
+                                <input type="checkbox" id="event-reminder">
+                                Set Reminder
+                            </label>
+                        </div>
+                        <button type="submit">Save Event</button>
+                    </form>
+                </div>
+            </div>
+        
+            <!-- Event List for Selected Date -->
+            <div id="event-list" class="event-list">
+                <h3>Events for <span id="selected-date"></span></h3>
+                <div id="events-container"></div>
+            </div>
         </div>
 
         <div id="prescriptions-content" class="content-area">
@@ -478,268 +603,385 @@
     
         <script>
             let currentDate = new Date();
-            let events = new Map();
+let events = new Map();
+let prescriptions = [
+    {
+        id: 1,
+        medication: 'Lisinopril',
+        dosage: '10mg',
+        frequency: 'Once daily',
+        duration: '3 months',
+        timestamp: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+    },
+    {
+        id: 2,
+        medication: 'Metformin',
+        dosage: '500mg',
+        frequency: 'Twice daily',
+        duration: '6 months',
+        timestamp: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+    },
+    {
+        id: 3,
+        medication: 'Atorvastatin',
+        dosage: '20mg',
+        frequency: 'Once daily at bedtime',
+        duration: 'Ongoing',
+        timestamp: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+    }
+];
+
+// Initialize calendar
+function initCalendar() {
+    renderCalendar();
+    setupEventListeners();
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('event-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+
+    // Close modal with × button
+    document.querySelector('.close-modal').onclick = function() {
+        closeModal();
+    };
+
+    // Handle event form submission
+    document.getElementById('event-form').onsubmit = function(e) {
+        e.preventDefault();
+        saveEvent();
+    };
+}
+
+// Helper function to format date for event storage
+function formatDateKey(date) {
+    return ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()};
+}
+
+function showContent(section) {
+    document.querySelectorAll('.content-area').forEach(area => area.style.display = 'none');
+    document.getElementById(${section}-content).style.display = 'block';
+    if (section === 'calendar') {
+        renderCalendar();
+    }
+}
+
+function renderCalendar() {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
     
-            // Store prescriptions with timestamps
-            let prescriptions = [
-                {
-                    id: 1,
-                    medication: 'Lisinopril',
-                    dosage: '10mg',
-                    frequency: 'Once daily',
-                    duration: '3 months',
-                    timestamp: new Date().toISOString(),
-                    lastModified: new Date().toISOString()
+    document.getElementById('current-month').textContent = 
+        ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()};
+
+    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+    const calendarDays = document.getElementById('calendar-days');
+    calendarDays.innerHTML = '';
+
+    // Add day headers
+    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-day';
+        dayHeader.textContent = day;
+        dayHeader.style.background = 'var(--bg-primary)';
+        dayHeader.style.cursor = 'default';
+        calendarDays.appendChild(dayHeader);
+    });
+
+    // Add empty cells for days before first day of month
+    for (let i = 0; i < firstDay.getDay(); i++) {
+        calendarDays.appendChild(document.createElement('div'));
+    }
+
+    // Add days of month
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
+
+        const currentDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        const dateKey = formatDateKey(currentDayDate);
+        
+        if (events.has(dateKey)) {
+            dayElement.classList.add('has-event');
+        }
+
+        dayElement.onclick = () => openEventModal(currentDayDate);
+        calendarDays.appendChild(dayElement);
+    }
+}
+
+// Open event modal
+function openEventModal(date) {
+    const modal = document.getElementById('event-modal');
+    document.getElementById('event-date').value = formatDateKey(date);
+    document.getElementById('selected-date').textContent = date.toLocaleDateString();
+    modal.style.display = 'block';
+    
+    // Display existing events
+    displayEvents(formatDateKey(date));
+}
+
+// Close modal function
+function closeModal() {
+    document.getElementById('event-modal').style.display = 'none';
+    document.getElementById('event-form').reset();
+}
+
+// Save event
+function saveEvent() {
+    const dateKey = document.getElementById('event-date').value;
+    const title = document.getElementById('event-title').value;
+    const time = document.getElementById('event-time').value;
+    const reminder = document.getElementById('event-reminder').checked;
+
+    if (!events.has(dateKey)) {
+        events.set(dateKey, []);
+    }
+
+    const currentEvents = events.get(dateKey);
+    currentEvents.push({
+        id: Date.now(),
+        title,
+        time,
+        reminder
+    });
+
+    events.set(dateKey, currentEvents);
+
+    // Close modal and reset form
+    closeModal();
+
+    // Update calendar and event display
+    renderCalendar();
+    displayEvents(dateKey);
+
+    // Set reminder if requested
+    if (reminder) {
+        setReminder(dateKey, title, time);
+    }
+}
+
+// Display events for selected date
+function displayEvents(dateKey) {
+    const container = document.getElementById('events-container');
+    container.innerHTML = '';
+
+    if (events.has(dateKey)) {
+        events.get(dateKey).forEach(event => {
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event-item';
+            eventElement.innerHTML = `
+                <div>
+                    <strong>${event.title}</strong>
+                    <br>
+                    <small>${event.time}</small>
+                </div>
+                <button onclick="deleteEvent('${dateKey}', ${event.id})">Delete</button>
+            `;
+            container.appendChild(eventElement);
+        });
+    }
+}
+
+// Delete event
+function deleteEvent(dateKey, eventId) {
+    const currentEvents = events.get(dateKey).filter(event => event.id !== eventId);
+    events.set(dateKey, currentEvents);
+    renderCalendar();
+    displayEvents(dateKey);
+}
+
+// Set reminder
+function setReminder(dateKey, title, time) {
+    const [year, month, day] = dateKey.split('-');
+    const [hours, minutes] = time.split(':');
+    const reminderDate = new Date(year, month - 1, day, hours, minutes);
+
+    if (reminderDate > new Date()) {
+        const timeUntilReminder = reminderDate - new Date();
+        setTimeout(() => {
+            alert(Reminder: ${title});
+        }, timeUntilReminder);
+    }
+}
+
+function previousMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+}
+
+function nextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+}
+
+// Prescription Management Functions
+function renderPrescriptions() {
+    const list = document.getElementById('prescriptionList');
+    list.innerHTML = '';
+    
+    prescriptions.forEach(prescription => {
+        const li = document.createElement('li');
+        li.className = 'prescription-item';
+        
+        li.innerHTML = `
+            <div class="prescription-details">
+                <h3>${prescription.medication}</h3>
+                <p>Dosage: ${prescription.dosage}</p>
+                <p>Frequency: ${prescription.frequency}</p>
+                <p>Duration: ${prescription.duration}</p>
+                <p class="timestamp">Created: ${new Date(prescription.timestamp).toLocaleString()}</p>
+                <p class="timestamp">Last Modified: ${new Date(prescription.lastModified).toLocaleString()}</p>
+            </div>
+            <div class="prescription-actions">
+                <button onclick="editPrescription(${prescription.id})">Edit</button>
+                <button onclick="deletePrescription(${prescription.id})">Delete</button>
+            </div>
+        `;
+        
+        list.appendChild(li);
+    });
+}
+
+function showAddPrescriptionForm() {
+    document.getElementById('form-title').textContent = 'Add Prescription';
+    document.getElementById('prescriptionId').value = '';
+    document.getElementById('prescriptionForm').reset();
+    document.getElementById('prescription-form').style.display = 'block';
+}
+
+function editPrescription(id) {
+    const prescription = prescriptions.find(p => p.id === id);
+    if (prescription) {
+        document.getElementById('form-title').textContent = 'Edit Prescription';
+        document.getElementById('prescriptionId').value = id;
+        document.getElementById('medication').value = prescription.medication;
+        document.getElementById('dosage').value = prescription.dosage;
+        document.getElementById('frequency').value = prescription.frequency;
+        document.getElementById('duration').value = prescription.duration;
+        document.getElementById('prescription-form').style.display = 'block';
+    }
+}
+
+function savePrescription(event) {
+    event.preventDefault();
+    
+    const prescriptionId = document.getElementById('prescriptionId').value;
+    const prescriptionData = {
+        medication: document.getElementById('medication').value,
+        dosage: document.getElementById('dosage').value,
+        frequency: document.getElementById('frequency').value,
+        duration: document.getElementById('duration').value,
+        lastModified: new Date().toISOString()
+    };
+
+    if (prescriptionId) {
+        // Edit existing prescription
+        const index = prescriptions.findIndex(p => p.id === parseInt(prescriptionId));
+        if (index !== -1) {
+            prescriptions[index] = {
+                ...prescriptions[index],
+                ...prescriptionData
+            };
+        }
+    } else {
+        // Add new prescription
+        const newPrescription = {
+            id: prescriptions.length + 1,
+            ...prescriptionData,
+            timestamp: new Date().toISOString()
+        };
+        prescriptions.push(newPrescription);
+    }
+
+    renderPrescriptions();
+    cancelEdit();
+}
+
+function deletePrescription(id) {
+    if (confirm('Are you sure you want to delete this prescription?')) {
+        prescriptions = prescriptions.filter(p => p.id !== id);
+        renderPrescriptions();
+    }
+}
+
+function cancelEdit() {
+    document.getElementById('prescription-form').style.display = 'none';
+    document.getElementById('prescriptionForm').reset();
+}
+
+// Theme Management
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    
+    // Update theme toggle button icon
+    const themeIcon = document.querySelector('.theme-icon');
+    themeIcon.textContent = newTheme === 'light' ? '🌞' : '🌙';
+    
+    // Save theme preference
+    localStorage.setItem('theme', newTheme);
+}
+
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeIcon = document.querySelector('.theme-icon');
+    themeIcon.textContent = savedTheme === 'light' ? '🌞' : '🌙';
+}
+
+// Initialize everything when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTheme();
+    initCalendar();
+    renderPrescriptions();
+    showContent('records');
+    
+    // Setup chatbot form handler
+    document.getElementById('chatbotForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const symptoms = document.getElementById('symptoms').value;
+        
+        if (!symptoms) {
+            alert("Please enter symptoms.");
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-                {
-                    id: 2,
-                    medication: 'Metformin',
-                    dosage: '500mg',
-                    frequency: 'Twice daily',
-                    duration: '6 months',
-                    timestamp: new Date().toISOString(),
-                    lastModified: new Date().toISOString()
-                },
-                {
-                    id: 3,
-                    medication: 'Atorvastatin',
-                    dosage: '20mg',
-                    frequency: 'Once daily at bedtime',
-                    duration: 'Ongoing',
-                    timestamp: new Date().toISOString(),
-                    lastModified: new Date().toISOString()
-                }
-            ];
-    
-            // Generate some random events
-            for (let i = 0; i < 5; i++) {
-                let randomDay = new Date(2024, 11, Math.floor(Math.random() * 31) + 1);
-                events.set(randomDay.toDateString(), 'Appointment');
-            }
-    
-            function showContent(section) {
-                document.querySelectorAll('.content-area').forEach(area => area.style.display = 'none');
-                document.getElementById(${section}-content).style.display = 'block';
-                if (section === 'calendar') {
-                    renderCalendar();
-                }
-            }
-    
-            function renderCalendar() {
-                const monthNames = ["January", "February", "March", "April", "May", "June",
-                                  "July", "August", "September", "October", "November", "December"];
-                document.getElementById('current-month').textContent = 
-                    ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()};
-    
-                const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-                
-                const calendarDays = document.getElementById('calendar-days');
-                calendarDays.innerHTML = '';
-    
-                // Add day headers
-                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
-                    const dayHeader = document.createElement('div');
-                    dayHeader.className = 'calendar-day';
-                    dayHeader.textContent = day;
-                    calendarDays.appendChild(dayHeader);
-                });
-    
-                // Add empty cells for days before first day of month
-                for (let i = 0; i < firstDay.getDay(); i++) {
-                    calendarDays.appendChild(document.createElement('div'));
-                }
-    
-                // Add days of month
-                for (let day = 1; day <= lastDay.getDate(); day++) {
-                    const dayElement = document.createElement('div');
-                    dayElement.className = 'calendar-day';
-                    dayElement.textContent = day;
-    
-                    const currentDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-                    if (events.has(currentDayDate.toDateString())) {
-                        dayElement.classList.add('has-event');
-                    }
-    
-                    dayElement.onclick = () => toggleEvent(currentDayDate);
-                    calendarDays.appendChild(dayElement);
-                }
-            }
-    
-            function toggleEvent(date) {
-                if (events.has(date.toDateString())) {
-                    events.delete(date.toDateString());
-                } else {
-                    events.set(date.toDateString(), 'Appointment');
-                }
-                renderCalendar();
-            }
-    
-            function previousMonth() {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar();
-            }
-    
-            function nextMonth() {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                renderCalendar();
-            }
-    
-            function renderPrescriptions() {
-                const list = document.getElementById('prescriptionList');
-                list.innerHTML = '';
-                
-                prescriptions.forEach(prescription => {
-                    const li = document.createElement('li');
-                    li.className = 'prescription-item';
-                    
-                    li.innerHTML = `
-                        <div class="prescription-details">
-                            <h3>${prescription.medication}</h3>
-                            <p>Dosage: ${prescription.dosage}</p>
-                            <p>Frequency: ${prescription.frequency}</p>
-                            <p>Duration: ${prescription.duration}</p>
-                            <p class="timestamp">Created: ${new Date(prescription.timestamp).toLocaleString()}</p>
-                            <p class="timestamp">Last Modified: ${new Date(prescription.lastModified).toLocaleString()}</p>
-                        </div>
-                        <div class="prescription-actions">
-                            <button onclick="editPrescription(${prescription.id})">Edit</button>
-                            <button onclick="deletePrescription(${prescription.id})">Delete</button>
-                        </div>
-                    `;
-                    
-                    list.appendChild(li);
-                });
-            }
-    
-            function showAddPrescriptionForm() {
-                document.getElementById('form-title').textContent = 'Add Prescription';
-                document.getElementById('prescriptionId').value = '';
-                document.getElementById('prescriptionForm').reset();
-                document.getElementById('prescription-form').style.display = 'block';
-            }
-    
-            function editPrescription(id) {
-                const prescription = prescriptions.find(p => p.id === id);
-                if (prescription) {
-                    document.getElementById('form-title').textContent = 'Edit Prescription';
-                    document.getElementById('prescriptionId').value = id;
-                    document.getElementById('medication').value = prescription.medication;
-                    document.getElementById('dosage').value = prescription.dosage;
-                    document.getElementById('frequency').value = prescription.frequency;
-                    document.getElementById('duration').value = prescription.duration;
-                    document.getElementById('prescription-form').style.display = 'block';
-                }
-            }
-    
-            function savePrescription(event) {
-                event.preventDefault();
-                
-                const prescriptionId = document.getElementById('prescriptionId').value;
-                const prescriptionData = {
-                    medication: document.getElementById('medication').value,
-                    dosage: document.getElementById('dosage').value,
-                    frequency: document.getElementById('frequency').value,
-                    duration: document.getElementById('duration').value,
-                    lastModified: new Date().toISOString()
-                };
-    
-                if (prescriptionId) {
-                    // Edit existing prescription
-                    const index = prescriptions.findIndex(p => p.id === parseInt(prescriptionId));
-                    if (index !== -1) {
-                        prescriptions[index] = {
-                            ...prescriptions[index],
-                            ...prescriptionData
-                        };
-                    }
-                } else {
-                    // Add new prescription
-                    const newPrescription = {
-                        id: prescriptions.length + 1,
-                        ...prescriptionData,
-                        timestamp: new Date().toISOString()
-                    };
-                    prescriptions.push(newPrescription);
-                }
-    
-                renderPrescriptions();
-                cancelEdit();
-            }
-    
-            function deletePrescription(id) {
-                if (confirm('Are you sure you want to delete this prescription?')) {
-                    prescriptions = prescriptions.filter(p => p.id !== id);
-                    renderPrescriptions();
-                }
-            }
-    
-            function cancelEdit() {
-                document.getElementById('prescription-form').style.display = 'none';
-                document.getElementById('prescriptionForm').reset();
-            }
-    
-            function toggleTheme() {
-                const html = document.documentElement;
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                html.setAttribute('data-theme', newTheme);
-                
-                // Update theme toggle button icon
-                const themeIcon = document.querySelector('.theme-icon');
-                themeIcon.textContent = newTheme === 'light' ? '🌞' : '🌙';
-                
-                // Save theme preference
-                localStorage.setItem('theme', newTheme);
-            }
-    
-            // Function to initialize theme from localStorage
-            function initializeTheme() {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                const themeIcon = document.querySelector('.theme-icon');
-                themeIcon.textContent = savedTheme === 'light' ? '🌞' : '🌙';
-            }
-    
-            // Chatbot form submission handler
-            document.getElementById('chatbotForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const symptoms = document.getElementById('symptoms').value;
-                
-                if (!symptoms) {
-                    alert("Please enter symptoms.");
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('/api/chatbot', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ symptoms }),
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.error) {
-                        alert(Error: ${data.error});
-                    } else {
-                        alert(data.advice);
-                    }
-                } catch (error) {
-                    alert("An error occurred. Please try again.");
-                }
+                body: JSON.stringify({ symptoms }),
             });
-    
-            // Initialize everything when the DOM is loaded
-            document.addEventListener('DOMContentLoaded', () => {
-                initializeTheme();
-                renderCalendar();
-                renderPrescriptions();
-                showContent('records');
-            });
-        </script>
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                alert(Error: ${data.error});
+            } else {
+                alert(data.advice);
+            }
+        } catch (error) {
+            alert("An error occurred. Please try again.");
+        }
+    });
+});
+</script>
     </body>
     </html>
